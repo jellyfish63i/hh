@@ -4,54 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-  html, body { height: 100%; margin: 0; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
   body {
-    background: #14080e;
-    color: #ff4d79;
+    background: linear-gradient(160deg, #ffe3ee 0%, #ffd0e2 50%, #ffc2d8 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: "Courier New", monospace;
+    font-family: "Jua", "Malgun Gothic", sans-serif;
+  }
+  #wrap {
+    animation: boing 1.6s ease-in-out infinite;
+    transform-origin: 50% 100%;
   }
   pre {
+    font-family: "Courier New", monospace;
+    font-weight: bold;
     font-size: clamp(6px, 1.7vw, 15px);
     line-height: 1;
     margin: 0;
-    text-shadow: 0 0 6px rgba(255, 77, 121, .5);
-    animation: beat 1.4s ease-in-out infinite;
+    background: linear-gradient(135deg, #ff8fb8, #ff5c8d 50%, #ff9ec4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 4px 8px rgba(255, 92, 141, .35));
   }
   #msg {
-    margin-top: 24px;
-    font-size: 20px;
-    color: #ffc2d4;
+    margin-top: 28px;
+    font-size: 32px;
+    color: #ff4f86;
     min-height: 1.5em;
     text-align: center;
-    padding: 0 16px;
+    text-shadow: 0 2px 0 #fff, 0 4px 10px rgba(255, 79, 134, .3);
+    z-index: 2;
   }
-  @keyframes beat {
-    0%, 100% { transform: scale(1); }
-    15% { transform: scale(1.05); }
-    30% { transform: scale(1); }
-    45% { transform: scale(1.03); }
+  .float {
+    position: fixed;
+    bottom: -40px;
+    pointer-events: none;
+    animation: up linear forwards;
+    z-index: 1;
+  }
+  @keyframes boing {
+    0%, 100% { transform: scale(1, 1); }
+    20% { transform: scale(1.07, .93); }
+    40% { transform: scale(.95, 1.06); }
+    60% { transform: scale(1.03, .98); }
+    80% { transform: scale(1, 1); }
+  }
+  @keyframes up {
+    to { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
-<pre id="heart"></pre>
+<div id="wrap"><pre id="heart"></pre></div>
 <div id="msg"></div>
 
 <script>
-  const MESSAGE = "사랑해";
+  const MESSAGE = "사랑해 ♡";
   const CHARS = "@#$%&*+=?!/|<>~01LOVE".split("");
   const ROWS = 40;
-  const ASPECT = 1 / 0.6; // 글자 높이 / 글자 너비
+  const ASPECT = 1 / 0.6;
 
   const dy = 2.7 / ROWS;
   const dx = dy / ASPECT;
 
-  // 하트 영역 계산
   const mask = [];
   for (let r = 0; r < ROWS; r++) {
     const y = 1.4 - r * dy;
@@ -90,6 +110,24 @@
       }, 200);
     }
   }, 50);
+
+  // 떠오르는 하트
+  const EMOJI = ["💗", "💖", "💕", "🌸", "✨", "🎀"];
+  function spawn(x, y) {
+    const s = document.createElement("span");
+    s.className = "float";
+    s.textContent = EMOJI[Math.floor(Math.random() * EMOJI.length)];
+    s.style.left = (x ?? Math.random() * 100) + (x === undefined ? "vw" : "px");
+    if (y !== undefined) s.style.bottom = (innerHeight - y) + "px";
+    s.style.fontSize = 16 + Math.random() * 22 + "px";
+    s.style.animationDuration = 6 + Math.random() * 5 + "s";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 11000);
+  }
+  setInterval(() => spawn(), 500);
+  document.addEventListener("pointerdown", e => {
+    for (let i = 0; i < 5; i++) spawn(e.clientX + (Math.random() - .5) * 60, e.clientY);
+  });
 </script>
 </body>
 </html>
